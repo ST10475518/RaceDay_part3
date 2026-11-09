@@ -1,0 +1,36 @@
+@{ ViewData["Title"] = "Welcome"; }
+<section class="rd-hero">
+    <div class="rd-hero-inner">
+        <p class="rd-kicker">Run · Walk · Cycle</p>
+        <h1 class="rd-hero-title">Find your <em>finish line.</em></h1>
+        <p class="rd-hero-text">RaceDay connects organisers and participants. Browse events, pick your category, enter in seconds and see your results the moment they're published.</p>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-lg rd-btn" asp-controller="Account" asp-action="Register">Join RaceDay</a>
+            <a class="btn btn-lg rd-btn-outline-light" asp-controller="Account" asp-action="Login">Log in</a>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mt-1">
+    <div class="col-md-4">
+        <div class="card rd-card h-100 p-4">
+            <div class="rd-big-emoji">🏃</div>
+            <h3 class="rd-card-title">For participants</h3>
+            <p class="text-muted mb-0">Browse upcoming events, enter in your category, track your enrolments and build your race history.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card rd-card h-100 p-4">
+            <div class="rd-big-emoji">📋</div>
+            <h3 class="rd-card-title">For organisers</h3>
+            <p class="text-muted mb-0">Create events with banners, define categories, confirm entries and publish finishing times and positions.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card rd-card h-100 p-4">
+            <div class="rd-big-emoji">🏆</div>
+            <h3 class="rd-card-title">For everyone</h3>
+            <p class="text-muted mb-0">One account, one profile. Your results are stored securely and always one click away.</p>
+        </div>
+    </div>
+</section>

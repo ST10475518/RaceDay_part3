@@ -1,0 +1,5 @@
+@model string
+@{
+    var css = Model switch { "Confirmed" => "status-confirmed", "Pending" => "status-pending", "Cancelled" => "status-cancelled", _ => "status-pending" };
+}
+<span class="status-badge @css">@Model</span>

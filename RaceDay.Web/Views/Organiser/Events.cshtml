@@ -1,0 +1,48 @@
+@model List<EventSummaryModel>
+@{ ViewData["Title"] = "My events"; }
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="rd-heading mb-0">My events</h1>
+    <a class="btn rd-btn" asp-action="CreateEvent">+ New event</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="rd-center-card text-center">
+        <div class="rd-big-emoji">🏁</div>
+        <p class="text-muted">You haven't created any events yet.</p>
+        <a class="btn rd-btn" asp-action="CreateEvent">Create an event</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+    @foreach (var s in Model)
+    {
+        var e = s.Event;
+        <div class="col-md-6 col-xl-4">
+            <div class="card rd-card event-card h-100">
+                <div class="position-relative">
+                    <partial name="_EventBanner" model="e" />
+                    <span class="type-chip">@Display.Icon(e.EventType) @e.EventType</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h3 class="rd-card-title">@e.Name</h3>
+                    <div class="event-meta">📅 @Display.Date(e.Date)</div>
+                    <div class="event-meta">📍 @e.Location · @Display.Distance(e.DistanceKm)</div>
+                    <div class="event-meta mb-3">👥 @s.EnrolmentCount enrolled · 🏷️ @s.CategoryCount categories</div>
+                    <div class="d-flex flex-wrap gap-2 mt-auto">
+                        <a class="btn btn-sm rd-btn-outline" asp-action="EditEvent" asp-route-id="@e.Id">Edit</a>
+                        <a class="btn btn-sm rd-btn-outline" asp-action="Categories" asp-route-eventId="@e.Id">Categories</a>
+                        <a class="btn btn-sm rd-btn-outline" asp-action="Enrolments" asp-route-eventId="@e.Id">Enrolments</a>
+                        <a class="btn btn-sm rd-btn-outline" asp-action="Results" asp-route-eventId="@e.Id">Results</a>
+                        <form asp-action="DeleteEvent" asp-route-id="@e.Id" method="post" class="ms-auto"
+                              onsubmit="return confirm('Delete this event and all of its categories, enrolments and results?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}

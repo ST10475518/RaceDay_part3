@@ -1,0 +1,58 @@
+@model CategoriesViewModel
+@{
+    ViewData["Title"] = "Categories";
+    ViewData["Tab"] = "Categories";
+}
+<nav class="rd-crumbs"><a asp-action="Events">My events</a> / <span>@Model.Event.Name</span></nav>
+<h1 class="rd-heading">Categories <small class="text-muted">· @Model.Event.Name</small></h1>
+<partial name="_OrganiserEventTabs" model="Model.Event" />
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card rd-card">
+            <div class="card-header rd-card-header">Categories for this event</div>
+            @if (Model.Categories.Count == 0)
+            {
+                <div class="card-body text-muted">No categories yet. Add one so participants can enter (e.g. "Under 20", "Senior", "10km", "21km").</div>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                @foreach (var c in Model.Categories)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div><strong>@c.Name</strong>@if (!string.IsNullOrWhiteSpace(c.Description)) { <div class="text-muted small">@c.Description</div> }</div>
+                        <form asp-action="DeleteCategory" method="post" onsubmit="return confirm('Remove this category?');">
+                            <input type="hidden" name="categoryId" value="@c.Id" />
+                            <input type="hidden" name="eventId" value="@Model.Event.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                    </li>
+                }
+                </ul>
+            }
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card rd-card">
+            <div class="card-header rd-card-header">Add a category</div>
+            <div class="card-body">
+                <form asp-action="AddCategory" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" name="EventId" value="@Model.Event.Id" />
+                    <div class="mb-3">
+                        <label for="cat-name" class="form-label">Name</label>
+                        <input id="cat-name" name="Name" value="@Model.Form.Name" class="form-control" placeholder="e.g. Under 20 or 10km" />
+                        <span class="text-danger small">@Html.ValidationMessage("Name")</span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cat-desc" class="form-label">Description (optional)</label>
+                        <input id="cat-desc" name="Description" value="@Model.Form.Description" class="form-control" />
+                        <span class="text-danger small">@Html.ValidationMessage("Description")</span>
+                    </div>
+                    <button type="submit" class="btn rd-btn w-100">Add category</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

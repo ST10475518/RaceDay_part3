@@ -1,0 +1,82 @@
+@model RegisterViewModel
+@{ ViewData["Title"] = "Join RaceDay"; }
+<div class="rd-auth-card wide">
+    <h1 class="rd-heading">Join RaceDay</h1>
+    <p class="text-muted">Create your account and choose how you'll use it.</p>
+    <form asp-action="Register" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <label class="form-label">I am a…</label>
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <input type="radio" class="btn-check" name="Role" id="role-participant" value="Participant" checked="@(Model.Role == "Participant")" />
+                <label class="btn rd-role-choice w-100" for="role-participant">🏃 Participant<small>Enter events</small></label>
+            </div>
+            <div class="col-6">
+                <input type="radio" class="btn-check" name="Role" id="role-organiser" value="Organiser" checked="@(Model.Role == "Organiser")" />
+                <label class="btn rd-role-choice w-100" for="role-organiser">📋 Organiser<small>Run events</small></label>
+            </div>
+        </div>
+        <span asp-validation-for="Role" class="text-danger small"></span>
+
+        <div id="organiser-code" class="mb-3" style="display:none">
+            <label asp-for="OrganiserCode" class="form-label"></label>
+            <input asp-for="OrganiserCode" class="form-control" autocomplete="off" />
+            <div class="form-text">Organiser accounts need the code supplied by RaceDay.</div>
+            <span asp-validation-for="OrganiserCode" class="text-danger small"></span>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="FirstName" class="form-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="LastName" class="form-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="DateOfBirth" class="form-label"></label>
+                <input asp-for="DateOfBirth" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+            </div>
+        </div>
+        <button type="submit" class="btn rd-btn w-100 mt-4">Create account</button>
+    </form>
+    <p class="text-center small mt-3 mb-0">Already registered? <a asp-action="Login">Log in</a></p>
+</div>
+@section Scripts {
+<script>
+    (function () {
+        var box = document.getElementById('organiser-code');
+        function sync() {
+            var organiser = document.getElementById('role-organiser').checked;
+            box.style.display = organiser ? 'block' : 'none';
+        }
+        document.querySelectorAll('input[name="Role"]').forEach(function (r) { r.addEventListener('change', sync); });
+        sync();
+    })();
+</script>
+}

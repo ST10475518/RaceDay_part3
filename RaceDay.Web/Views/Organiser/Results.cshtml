@@ -1,0 +1,59 @@
+@model ResultsViewModel
+@{
+    ViewData["Title"] = "Results";
+    ViewData["Tab"] = "Results";
+}
+<nav class="rd-crumbs"><a asp-action="Events">My events</a> / <span>@Model.Event.Name</span></nav>
+<h1 class="rd-heading">Results <small class="text-muted">· @Model.Event.Name</small></h1>
+<partial name="_OrganiserEventTabs" model="Model.Event" />
+
+@if (Model.Event.Date > DateTime.Now)
+{
+    <div class="alert alert-info">This event hasn't taken place yet (@Display.Date(Model.Event.Date)). You can still enter results, but they're normally captured after the event concludes.</div>
+}
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="rd-center-card text-center">
+        <div class="rd-big-emoji">⏱️</div>
+        <p class="text-muted mb-0">There are no enrolled participants to record results for.</p>
+    </div>
+}
+else
+{
+    <div class="card rd-card">
+        <div class="card-header rd-card-header">Enter finish time (hh:mm:ss) and finishing position</div>
+        <div class="table-responsive">
+            <table class="table rd-table align-middle mb-0">
+                <thead><tr><th>Participant</th><th>Category</th><th>Status</th><th>Finish time</th><th>Position</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    var formId = $"result-{row.Enrolment.Id}";
+                    <tr>
+                        <td><strong>@row.Enrolment.ParticipantName</strong></td>
+                        <td>@row.Enrolment.CategoryName</td>
+                        <td><partial name="_StatusBadge" model="row.Enrolment.Status" /></td>
+                        <td style="min-width:130px">
+                            <input form="@formId" name="finishTime" class="form-control form-control-sm" placeholder="00:52:30"
+                                   value="@(row.Result is null ? "" : Display.TimeFull(row.Result.FinishTime))" />
+                        </td>
+                        <td style="width:110px">
+                            <input form="@formId" name="position" type="number" min="1" class="form-control form-control-sm"
+                                   value="@(row.Result?.Position.ToString() ?? "")" />
+                        </td>
+                        <td class="text-end">
+                            <form id="@formId" asp-action="SaveResult" method="post" class="m-0">
+                                <input type="hidden" name="eventId" value="@Model.Event.Id" />
+                                <input type="hidden" name="enrolmentId" value="@row.Enrolment.Id" />
+                                <input type="hidden" name="resultId" value="@(row.Result?.Id.ToString() ?? "")" />
+                                <button type="submit" class="btn btn-sm rd-btn">@(row.Result is null ? "Publish" : "Update")</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

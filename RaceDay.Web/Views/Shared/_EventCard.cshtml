@@ -1,0 +1,23 @@
+@* Model: EventModel. ViewData["Enrolled"] (bool) marks events the participant has entered. *@
+@model EventModel
+@{
+    var enrolled = ViewData["Enrolled"] as bool? ?? false;
+}
+<div class="card rd-card event-card h-100">
+    <div class="position-relative">
+        <partial name="_EventBanner" model="Model" />
+        <span class="type-chip">@Display.Icon(Model.EventType) @Model.EventType</span>
+        @if (enrolled)
+        {
+            <span class="entered-chip">✔ Entered</span>
+        }
+    </div>
+    <div class="card-body d-flex flex-column">
+        <h3 class="rd-card-title">@Model.Name</h3>
+        <div class="event-meta">📅 @Display.Date(Model.Date)</div>
+        <div class="event-meta">📍 @Model.Location</div>
+        <div class="event-meta">📏 @Display.Distance(Model.DistanceKm)</div>
+        <p class="text-muted small mt-2 flex-grow-1">@(Model.Description.Length > 110 ? Model.Description[..110] + "…" : Model.Description)</p>
+        <a class="btn rd-btn w-100" asp-controller="Participant" asp-action="Details" asp-route-id="@Model.Id">View event</a>
+    </div>
+</div>

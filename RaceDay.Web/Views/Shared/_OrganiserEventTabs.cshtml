@@ -1,0 +1,8 @@
+@model EventModel
+@{ var tab = ViewData["Tab"] as string ?? ""; }
+<ul class="nav rd-tabs mb-4">
+    <li class="nav-item"><a class="nav-link @(tab == "Categories" ? "active" : "")" asp-controller="Organiser" asp-action="Categories" asp-route-eventId="@Model.Id">Categories</a></li>
+    <li class="nav-item"><a class="nav-link @(tab == "Enrolments" ? "active" : "")" asp-controller="Organiser" asp-action="Enrolments" asp-route-eventId="@Model.Id">Enrolments</a></li>
+    <li class="nav-item"><a class="nav-link @(tab == "Results" ? "active" : "")" asp-controller="Organiser" asp-action="Results" asp-route-eventId="@Model.Id">Results</a></li>
+    <li class="nav-item"><a class="nav-link" asp-controller="Organiser" asp-action="EditEvent" asp-route-id="@Model.Id">Edit event</a></li>
+</ul>

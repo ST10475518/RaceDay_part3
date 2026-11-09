@@ -1,0 +1,52 @@
+@model ProfileViewModel
+@{ ViewData["Title"] = "My profile"; }
+<div class="rd-form-card">
+    <h1 class="rd-heading">My profile</h1>
+    <form method="post" enctype="multipart/form-data" asp-action="Index" novalidate>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div class="d-flex align-items-center gap-3 mb-4">
+            @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+            {
+                <img src="@Model.ProfilePictureUrl" alt="Profile picture" class="profile-pic" />
+            }
+            else
+            {
+                <div class="profile-pic profile-pic-fallback">@(string.IsNullOrEmpty(Model.FirstName) ? "?" : Model.FirstName.Substring(0, 1).ToUpper())</div>
+            }
+            <div>
+                <div class="fw-semibold">@Model.Email</div>
+                <span class="rd-role-pill">@Model.Role</span>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="FirstName" class="form-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="LastName" class="form-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="DateOfBirth" class="form-label"></label>
+                <input asp-for="DateOfBirth" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Picture" class="form-label"></label>
+                <input asp-for="Picture" type="file" class="form-control" accept="image/png,image/jpeg,image/webp,image/gif" />
+                <div class="form-text">JPG, PNG, WEBP or GIF up to 5 MB.</div>
+                <span asp-validation-for="Picture" class="text-danger small"></span>
+            </div>
+        </div>
+        <button type="submit" class="btn rd-btn mt-4">Save profile</button>
+    </form>
+</div>

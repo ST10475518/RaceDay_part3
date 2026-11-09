@@ -1,0 +1,34 @@
+@model List<ResultModel>
+@{ ViewData["Title"] = "My results"; }
+<h1 class="rd-heading">My results</h1>
+<p class="text-muted">Your race history across completed events.</p>
+
+@if (Model.Count == 0)
+{
+    <div class="rd-center-card text-center">
+        <div class="rd-big-emoji">🏆</div>
+        <p class="text-muted mb-0">No results yet. They appear here once an organiser publishes them after your event.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+    @foreach (var r in Model)
+    {
+        <div class="col-md-6 col-xl-4">
+            <div class="card rd-card result-card h-100">
+                <div class="result-pos">
+                    <span class="pos-num">@Display.Ordinal(r.Position)</span>
+                    <span class="pos-of">of @r.TotalFinishers @(r.TotalFinishers == 1 ? "finisher" : "finishers")</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="rd-card-title">@r.EventName</h3>
+                    <div class="event-meta">📅 @Display.ShortDate(r.EventDate)</div>
+                    <div class="event-meta">🏷️ @r.CategoryName</div>
+                    <div class="finish-time">⏱ @Display.Time(r.FinishTime)</div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}

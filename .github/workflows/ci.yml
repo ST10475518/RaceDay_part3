@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify repository structure
+        run: |
+          for f in README.md RaceDay.sln docker-compose.yml RaceDay.Api/Dockerfile RaceDay.Web/Dockerfile RaceDay.Web/RaceDay.Web.csproj; do
+            test -f "$f" || { echo "::error::Missing required file: $f"; exit 1; }
+          done
+          test -d RaceDay.Api/Migrations || { echo "::error::Missing EF Core migrations folder"; exit 1; }
+          grep -qi "docker compose up" README.md || { echo "::error::README is missing the Docker run command"; exit 1; }
+          echo "Repository structure OK"
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore RaceDay.sln
+
+      - name: Build API
+        run: dotnet build RaceDay.Api/RaceDay.Api.csproj --no-restore --configuration Release
+
+      - name: Build MVC project
+        run: dotnet build RaceDay.Web/RaceDay.Web.csproj --no-restore --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test RaceDay.sln --configuration Release --verbosity normal
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build MVC Docker image
+        run: docker build -t raceday-web ./RaceDay.Web
+      - name: Build API Docker image
+        run: docker build -t raceday-api ./RaceDay.Api

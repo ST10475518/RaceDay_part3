@@ -1,0 +1,42 @@
+@model List<EnrolmentModel>
+@{ ViewData["Title"] = "My events"; }
+<h1 class="rd-heading">My events</h1>
+
+@if (Model.Count == 0)
+{
+    <div class="rd-center-card text-center">
+        <div class="rd-big-emoji">🎽</div>
+        <p class="text-muted">You haven't entered any events yet.</p>
+        <a class="btn rd-btn" asp-action="Index">Browse events</a>
+    </div>
+}
+else
+{
+    <div class="card rd-card">
+        <div class="table-responsive">
+            <table class="table rd-table align-middle mb-0">
+                <thead><tr><th>Event</th><th>Date</th><th>Category</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td><a class="fw-semibold" asp-action="Details" asp-route-id="@e.EventId">@e.EventName</a></td>
+                        <td>@Display.Date(e.EventDate)</td>
+                        <td>@e.CategoryName</td>
+                        <td><partial name="_StatusBadge" model="e.Status" /></td>
+                        <td class="text-end">
+                            @if (e.EventDate > DateTime.Now)
+                            {
+                                <form asp-action="Withdraw" asp-route-id="@e.Id" method="post" class="m-0"
+                                      onsubmit="return confirm('Withdraw from this event?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Withdraw</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

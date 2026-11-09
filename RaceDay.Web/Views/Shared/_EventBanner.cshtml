@@ -1,0 +1,15 @@
+@* Model: EventModel. Shows the uploaded banner (stored in Azure Blob Storage) or a branded placeholder. *@
+@model EventModel
+@inject ApiClient Api
+@{
+    var url = Api.ResolveImage(Model.BannerUrl);
+    var css = ViewData["Class"] as string ?? "event-banner";
+}
+@if (!string.IsNullOrEmpty(url))
+{
+    <img src="@url" alt="@Model.Name banner" class="@css" loading="lazy" />
+}
+else
+{
+    <div class="@css event-banner-placeholder"><span>@Display.Icon(Model.EventType)</span></div>
+}

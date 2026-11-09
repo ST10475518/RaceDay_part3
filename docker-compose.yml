@@ -1,0 +1,43 @@
+# Starts the complete RaceDay stack with ONE command:   docker compose up --build
+#   web  -> http://localhost:8080          (MVC front end)
+#   api  -> http://localhost:5100/swagger  (Part 2 API + Swagger)
+#   db   -> SQL Server 2022 (internal)
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "RaceDay_Passw0rd!"
+    volumes:
+      - raceday-sql:/var/opt/mssql
+
+  api:
+    build: ./RaceDay.Api
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=RaceDayDb;User Id=sa;Password=RaceDay_Passw0rd!;TrustServerCertificate=True"
+      # Set AZURE_STORAGE_CONNECTION_STRING (shell or .env file) to store images in Azure Blob Storage.
+      # Left empty, the API falls back to a local uploads folder.
+      AzureBlob__ConnectionString: "${AZURE_STORAGE_CONNECTION_STRING:-}"
+      AzureBlob__ContainerName: "raceday-images"
+    ports:
+      - "5100:8080"
+    volumes:
+      - raceday-uploads:/app/uploads
+
+  web:
+    build: ./RaceDay.Web
+    depends_on:
+      - api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Api__BaseUrl: "http://api:8080"          # server-to-server (inside Docker)
+      Api__PublicUrl: "http://localhost:5100"  # used by the browser for locally stored images
+    ports:
+      - "8080:8080"
+
+volumes:
+  raceday-sql:
+  raceday-uploads:

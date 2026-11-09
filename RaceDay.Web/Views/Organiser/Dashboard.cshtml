@@ -1,0 +1,77 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var now = DateTime.Now;
+    var upcoming = Model.Events.Where(e => e.Event.Date >= now).OrderBy(e => e.Event.Date).ToList();
+    var totalEnrolments = Model.Events.Sum(e => e.EnrolmentCount);
+}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="rd-heading mb-0">Organiser dashboard</h1>
+    <a class="btn rd-btn" asp-action="CreateEvent">+ New event</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">@Model.Events.Count</div><div class="stat-label">Events created</div></div></div>
+    <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">@upcoming.Count</div><div class="stat-label">Upcoming events</div></div></div>
+    <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">@totalEnrolments</div><div class="stat-label">Total enrolments</div></div></div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-num sm">@(upcoming.Count > 0 ? Display.ShortDate(upcoming[0].Event.Date) : "—")</div>
+            <div class="stat-label">Next event</div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Events.Count == 0)
+{
+    <div class="rd-center-card text-center">
+        <div class="rd-big-emoji">🏁</div>
+        <h2 class="rd-heading">No events yet</h2>
+        <p class="text-muted">Create your first event to start collecting enrolments.</p>
+        <a class="btn rd-btn" asp-action="CreateEvent">Create an event</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card rd-card">
+                <div class="card-header rd-card-header">Enrolments per event</div>
+                <div class="table-responsive">
+                    <table class="table rd-table align-middle mb-0">
+                        <thead><tr><th>Event</th><th>Date</th><th class="text-center">Enrolments</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var e in Model.Events.OrderBy(x => x.Event.Date))
+                        {
+                            <tr>
+                                <td><strong>@e.Event.Name</strong><div class="text-muted small">@Display.Icon(e.Event.EventType) @e.Event.EventType · @Display.Distance(e.Event.DistanceKm)</div></td>
+                                <td>@Display.ShortDate(e.Event.Date)</td>
+                                <td class="text-center"><span class="count-pill">@e.EnrolmentCount</span></td>
+                                <td class="text-end"><a class="btn btn-sm rd-btn-outline" asp-action="Enrolments" asp-route-eventId="@e.Event.Id">View</a></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card rd-card">
+                <div class="card-header rd-card-header">Upcoming event dates</div>
+                <ul class="list-group list-group-flush">
+                @if (upcoming.Count == 0)
+                {
+                    <li class="list-group-item text-muted">Nothing scheduled.</li>
+                }
+                @foreach (var e in upcoming.Take(6))
+                {
+                    <li class="list-group-item d-flex align-items-center gap-3">
+                        <div class="date-tile"><span>@e.Event.Date.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span><strong>@e.Event.Date.Day</strong></div>
+                        <div><div class="fw-semibold">@e.Event.Name</div><div class="text-muted small">@e.Event.Date.ToString("HH:mm") · @e.Event.Location</div></div>
+                    </li>
+                }
+                </ul>
+            </div>
+        </div>
+    </div>
+}
